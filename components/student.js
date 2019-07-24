@@ -15,6 +15,7 @@ class Student {
 	*/
 	constructor(id, name, course, grade, deleteCallback = () => { }) {
 		//this method has been built out to help you understand the general structure better
+
 		this.data = {
 			id: id,
 			name: name,
@@ -32,6 +33,9 @@ class Student {
 		};
 		this.handleDelete = this.handleDelete.bind(this);
 		this.render = this.render.bind(this);
+		$("#delete").on("click", this.handleDelete);
+
+
 	}
 
 	/* getData - get all the student data as a simple object
@@ -44,7 +48,7 @@ class Student {
 	ESTIMATED TIME: 30 minutes
 	*/
 	getData() {
-
+		return this.data;
 	}
 
 	/* render - create and return a table row (TR) with 4 table cells (TD) in them:
@@ -65,7 +69,22 @@ class Student {
 	ESTIMATED TIME: 2 hours
 	*/
 	render() {
+		this.domElements.row = $('<tr>');
+		this.domElements.name = $('<td>').text(this.data.name);
+		this.domElements.course = $('<td>').text(this.data.course);
+		this.domElements.grade = $('<td>').text(this.data.grade);
+		this.domElements.operations = $('<td>');
+		var button = $('<button>').text("delete");
+		var button2 = $(button).on("click", this.handleDelete);
+		$(button).append(button2);
+		$(this.domElements.operations).append(button);
+		$(this.domElements.row).append(this.domElements.name);
+		$(this.domElements.row).append(this.domElements.course);
+		$(this.domElements.row).append(this.domElements.grade);
+		$(this.domElements.row).append(this.domElements.operations);
 
+
+		return this.domElements.row;
 	}
 
 	/* handleDelete - call the SGT_template delete callback, and remove this student's dom element
@@ -76,6 +95,8 @@ class Student {
 	ESTIMATED TIME: 15 minutes
 	*/
 	handleDelete() {
+		this.deleteCallback(this.data.id);
+		this.domElements.row.remove();
 
 	}
 
@@ -95,7 +116,34 @@ class Student {
 	return: (boolean) true if it was changed, false if it was not
 	ESTIMATED TIME: 1.5 hours
 	*/
-	update() {
+	update(field, value) {
+		switch (field) {
+			case "id":
+				this.data.id = value;
+				this.domElements.id.text(value);
+				this.domElements.id = value;
+				return true;
+				break;
+			case "name":
+				this.data.name = value;
+				this.domElements.name.text(value);
+				this.domElements.name = value;
+				return true;
+				break;
+			case "grade":
+				this.data.grade = parseInt(value);
+				this.domElements.grade.text(parseInt(value));
+				this.domElements.grade = value;
+				return true;
+			case "course":
+				this.data.course = value;
+				this.domElements.course.text(value);
+				this.domElements.course = value;
+				return true;
+			default:
+				return false;
+		}
 
 	}
+
 }

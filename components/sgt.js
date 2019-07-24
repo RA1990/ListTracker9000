@@ -11,7 +11,12 @@ class SGT_template {
 	constructor(elementConfig) {
 		this.elementConfig = elementConfig; /* console.log elementConfig to note what data you have access to */
 		this.data = {};
-
+		this.addEventHandlers = this.addEventHandlers.bind(this);
+		this.createStudent = this.createStudent.bind(this);
+		this.handleAdd = this.handleAdd.bind(this);
+		this.displayAllStudents = this.displayAllStudents.bind(this);
+		this.doesStudentExist = this.doesStudentExist.bind(this);
+		this.deleteStudent = this.deleteStudent.bind(this);
 
 	}
 
@@ -24,8 +29,8 @@ class SGT_template {
 	ESTIMATED TIME: 15 minutes
 	*/
 	addEventHandlers() {
-
-
+		$("#addButton").on("click",this.handleAdd);
+		$("#cancelButton").on("click",this.handleCancel);
 	}
 
 	/* clearInputs - Clear the values in the three form inputs
@@ -34,7 +39,9 @@ class SGT_template {
 	ESTIMATED TIME: 15 minutes
 	*/
 	clearInputs() {
-
+		$("#studentName").val('');
+		$("#studentCourse").val('');
+		$("#studentGrade").val('');
 	}
 
 	/* handleCancel - function to handle the cancel button press (should clear out all values in the inputs)
@@ -43,7 +50,10 @@ class SGT_template {
 	ESTIMATED TIME: 15 minutes
 	*/
 	handleCancel() {
-
+		$("#studentName").val('');
+		$("#studentCourse").val('');
+		$("#studentGrade").val('');
+		return;
 	}
 
 	/* createStudent - take in data for a student, make a new Student object, and add it to this.data object
@@ -67,7 +77,27 @@ class SGT_template {
 	return: false if unsuccessful in adding student, true if successful
 	ESTIMATED TIME: 1.5 hours
 	*/
-	createStudent() {
+	createStudent(name,course,grade,id) {
+		if (this.doesStudentExist(id)) {
+			return false;
+		};
+		if (!id) {
+			var idArray = Object.keys(this.data);
+			for (var idArrayIndex = 0; idArrayIndex < idArray.length; idArrayIndex++) {
+
+				if (parseInt(idArray[idArrayIndex]) !== idArrayIndex + 1) {
+					id = idArrayIndex + 1;
+					var newStudent = new Student(id, name, course, grade, this.deleteStudent);
+					this.data[id] = newStudent;
+					return true;
+				}
+			}
+			id = idArrayIndex + 1;
+		}
+		var newStudent = new Student(id, name, course, grade, this.deleteStudent);
+		this.data[id] = newStudent;
+		return true;
+
 
 	}
 
@@ -80,8 +110,8 @@ class SGT_template {
 	return: false if id is undefined or that student doesn't exist, true if the student does exist
 	ESTIMATED TIME: 15 minutes
 	*/
-	doesStudentExist() {
-
+	doesStudentExist(id) {
+		return this.data.hasOwnProperty( id );
 	}
 
 	/* handleAdd - function to handle the add button click
@@ -95,7 +125,11 @@ class SGT_template {
 	ESTIMATED TIME: 1 hour
 	*/
 	handleAdd() {
-
+		var name =$("#studentName").val();
+		var course=	$("#studentCourse").val();
+		var grade=$("#studentGrade").val();
+		this.createStudent(name,course,grade);
+		this.displayAllStudents();
 	}
 
 	/* readStudent -
@@ -110,10 +144,15 @@ class SGT_template {
 		a singular Student object if an ID was given, an array of Student objects if no ID was given
 		ESTIMATED TIME: 45 minutes
 	*/
-	readStudent() {
-
+	readStudent(id) {
+		if(id === undefined){
+			return Object.values(this.data);
+		}
+		if(!this.doesStudentExist(id)){
+			return false;
+		}
+		return this.data[id];
 	}
-
 	/* displayAllStudents - iterate through all students in the this.data object
 	purpose:
 		- grab all students from this.data,
@@ -127,7 +166,12 @@ class SGT_template {
 	ESTIMATED TIME: 1.5 hours
 	*/
 	displayAllStudents() {
-
+		$("#displayArea").empty();
+		var idArrayToRender = Object.keys(this.data);
+		for(var idArrayToRenderIndex = 1;idArrayToRenderIndex<idArrayToRender.length+1;idArrayToRenderIndex++){
+			$("#displayArea").append(this.data[idArrayToRenderIndex].render());
+			this.displayAverage();
+		}
 	}
 
 	/* displayAverage - get the grade average and display it
@@ -140,7 +184,14 @@ class SGT_template {
 	*/
 
 	displayAverage() {
-
+		var gradeCounter = 0;
+		var totalGrades = 0;
+		for (var key in this.data) {
+			gradeCounter += 1;
+			totalGrades += this.data[key].data.grade;
+		}
+		var average = totalGrades / gradeCounter;
+		return $(".avgGrade").text(average.toFixed(2));
 	}
 
 	/* deleteStudent -
@@ -156,7 +207,19 @@ class SGT_template {
 		true if it was successful, false if not
 		ESTIMATED TIME: 30 minutes
 	*/
-	deleteStudent() {
+	deleteStudent(id) {
+		if(!this.doesStudentExist(id)){
+			return false;
+		}
+		for(var key in this.data){
+
+			if(this.data[key].data.id === id){
+			 delete this.data[key];
+			 return true;
+			}
+
+		}
+		return false;
 
 	}
 
@@ -177,6 +240,5 @@ class SGT_template {
 		ESTIMATED TIME: no needed for first versions: 30 minutes
 	*/
 	updateStudent() {
-
 	}
 }
