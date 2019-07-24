@@ -9,6 +9,7 @@ class SGT_template {
 	return: undefined
 	*/
 	constructor(elementConfig) {
+		
 		this.elementConfig = elementConfig; /* console.log elementConfig to note what data you have access to */
 		this.data = {};
 		this.addEventHandlers = this.addEventHandlers.bind(this);
