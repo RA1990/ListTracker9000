@@ -21,7 +21,37 @@ class SGT_template {
 		this.retrieveStudentDataFromServer = this.retrieveStudentDataFromServer.bind(this);
 
 	}
+
+	addNewStudentToServer(studentName, studentCourse, studentGrade){
+
+		$.ajax({
+			url: 'http://s-apis.learningfuze.com/sgt/create',
+			method: 'post',
+			dataType: 'JSON',
+			data: {
+				'api_key': 'fHzfUBECTP',
+					name:studentName,
+					course:studentCourse,
+					grade:
+
+			},
+			success: function (response) {
+
+
+			}.bind(this),
+			error: function (response) {
+				console.log("retrieveStudentDataFromServer failed");
+			}
+		});
+
+
+	}
+
+
+
+
 	retrieveStudentDataFromServer(){
+
 $.ajax({
 			url: 'http://s-apis.learningfuze.com/sgt/get',
 			method: 'post',
@@ -33,7 +63,7 @@ $.ajax({
 		debugger;
 		console.log(response);
 		console.log(response.data);
-		console.log(response.data.length)
+		console.log(response.data.length);
 		var responseLength= response.data.length
 		console.log("retrieveStudentDataFromServer is working");
 		for(var responseDataIndex=0;responseDataIndex<responseLength;responseDataIndex++){
@@ -117,9 +147,6 @@ $.ajax({
 
 
 		// })
-
-
-		debugger;
 		if (this.doesStudentExist(id)) {
 			return false;
 		};
