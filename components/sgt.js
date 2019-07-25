@@ -19,25 +19,24 @@ class SGT_template {
 		this.doesStudentExist = this.doesStudentExist.bind(this);
 		this.deleteStudent = this.deleteStudent.bind(this);
 		this.retrieveStudentDataFromServer = this.retrieveStudentDataFromServer.bind(this);
-
+		this.addNewStudentToServer = this.addNewStudentToServer.bind(this);
 	}
 
 	addNewStudentToServer(studentName, studentCourse, studentGrade){
-
 		$.ajax({
 			url: 'http://s-apis.learningfuze.com/sgt/create',
 			method: 'post',
 			dataType: 'JSON',
 			data: {
 				'api_key': 'fHzfUBECTP',
-					name:studentName,
-					course:studentCourse,
-					grade:
+					'name':studentName,
+					'course':studentCourse,
+					'grade':studentGrade
 
 			},
 			success: function (response) {
-
-
+				console.log("success1");
+				console.log(response);
 			}.bind(this),
 			error: function (response) {
 				console.log("retrieveStudentDataFromServer failed");
@@ -60,7 +59,6 @@ $.ajax({
 		'api_key':'fHzfUBECTP'
 	},
 	success: function(response){
-		debugger;
 		console.log(response);
 		console.log(response.data);
 		console.log(response.data.length);
@@ -72,6 +70,7 @@ $.ajax({
 			var newCourse = response.data[responseDataIndex].course;
 			var newGrade = response.data[responseDataIndex].grade;
 			this.createStudent(newId,newName,newCourse,newGrade);
+			//this.addNewStudentToServer(newName, newCourse, newGrade);
 		}
 		this.displayAllStudents();
 	}.bind(this),
@@ -140,32 +139,21 @@ $.ajax({
 	ESTIMATED TIME: 1.5 hours
 	*/
 	createStudent(id,name,course,grade) {
-		// $.ajax({
-		// 	url: 'http://s-apis.learningfuze.com/sgt/create',
-		// 	method: 'post',
-		// 	input:
 
-
-		// })
 		if (this.doesStudentExist(id)) {
 			return false;
-		};
-		if (!id) {
-			var idArray = Object.keys(this.data);
-			for (var idArrayIndex = 0; idArrayIndex < idArray.length; idArrayIndex++) {
-
-				if (parseInt(idArray[idArrayIndex]) !== idArrayIndex + 1) {
-					id = idArrayIndex + 1;
-					var newStudent = new Student(id, name, course, grade, this.deleteStudent);
-					this.data[id] = newStudent;
-					return true;
-				}
+		} else {
+			console.log('student doesnt exist');
+			if (!id) {
+				id = 1;
 			}
-			id = idArrayIndex + 1;
+			while (this.doesStudentExist(id)) {
+				id++;
+			}
+			var newStudent = new Student(id, name, course, grade, this.deleteStudent)
+			this.data[id] = newStudent;
+			return true;
 		}
-		var newStudent = new Student(id, name, course, grade, this.deleteStudent);
-		this.data[id] = newStudent;
-		return true;
 
 
 	}
@@ -198,6 +186,7 @@ $.ajax({
 		var course=	$("#studentCourse").val();
 		var grade=$("#studentGrade").val();
 		this.createStudent(name,course,grade);
+		this.addNewStudentToServer(name, course, grade);
 		this.displayAllStudents();
 	}
 
@@ -235,7 +224,12 @@ $.ajax({
 	ESTIMATED TIME: 1.5 hours
 	*/
 	displayAllStudents() {
+		debugger;
 		$("#displayArea").empty();
+		var name = $("#studentName").val();
+		var course = $("#studentCourse").val();
+		var grade = $("#studentGrade").val();
+		this.createStudent(name,grade,course);
 		var idArrayToRender = Object.keys(this.data);
 		for(var idArrayToRenderIndex = 1;idArrayToRenderIndex<idArrayToRender.length+1;idArrayToRenderIndex++){
 			$("#displayArea").append(this.data[idArrayToRenderIndex].render());
