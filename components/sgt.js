@@ -17,7 +17,7 @@ class SGT_template {
 		this.handleAdd = this.handleAdd.bind(this);
 		this.displayAllStudents = this.displayAllStudents.bind(this);
 		this.doesStudentExist = this.doesStudentExist.bind(this);
-		this.deleteStudent = this.deleteStudent.bind(this);
+		this.deleteStudentFromServer = this.deleteStudentFromServer.bind(this);
 		this.retrieveStudentDataFromServer = this.retrieveStudentDataFromServer.bind(this);
 		this.addNewStudentToServer = this.addNewStudentToServer.bind(this);
 	}
@@ -35,7 +35,7 @@ class SGT_template {
 
 			},
 			success: function (response) {
-				console.log("success1");
+				console.log("success addNewStudentToServer");
 				console.log(response);
 			}.bind(this),
 			error: function (response) {
@@ -70,7 +70,7 @@ $.ajax({
 			var newCourse = response.data[responseDataIndex].course;
 			var newGrade = response.data[responseDataIndex].grade;
 			this.createStudent(newId,newName,newCourse,newGrade);
-			//this.addNewStudentToServer(newName, newCourse, newGrade);
+			//this.addNewStudentToServer(newName, newCourse, newGrade);	//for easter egg
 		}
 		this.displayAllStudents();
 	}.bind(this),
@@ -139,7 +139,7 @@ $.ajax({
 	ESTIMATED TIME: 1.5 hours
 	*/
 	createStudent(id,name,course,grade) {
-
+		debugger;
 		if (this.doesStudentExist(id)) {
 			return false;
 		} else {
@@ -150,7 +150,7 @@ $.ajax({
 			while (this.doesStudentExist(id)) {
 				id++;
 			}
-			var newStudent = new Student(id, name, course, grade, this.deleteStudent)
+			var newStudent = new Student(id, name, course, grade, this.deleteStudentFromServer)
 			this.data[id] = newStudent;
 			return true;
 		}
@@ -230,11 +230,12 @@ $.ajax({
 		var course = $("#studentCourse").val();
 		var grade = $("#studentGrade").val();
 		this.createStudent(name,grade,course);
-		var idArrayToRender = Object.keys(this.data);
-		for(var idArrayToRenderIndex = 1;idArrayToRenderIndex<idArrayToRender.length+1;idArrayToRenderIndex++){
-			$("#displayArea").append(this.data[idArrayToRenderIndex].render());
-			this.displayAverage();
+		for(var key in this.data){
+			$("#displayArea").append(this.data[key].render());
 		}
+
+			this.displayAverage();
+
 	}
 
 	/* displayAverage - get the grade average and display it
@@ -270,19 +271,42 @@ $.ajax({
 		true if it was successful, false if not
 		ESTIMATED TIME: 30 minutes
 	*/
-	deleteStudent(id) {
-		if(!this.doesStudentExist(id)){
-			return false;
-		}
-		for(var key in this.data){
+	deleteStudentFromServer(id) {
+		debugger;
+		// if(!this.doesStudentExist(id)){
+		// 	return false;
+		// }
 
-			if(this.data[key].data.id === id){
-			 delete this.data[key];
-			 return true;
-			}
+		if(this.data.hasOwnProperty(id)){
+
+			$.ajax({
+				url: 'http://s-apis.learningfuze.com/sgt/delete',
+				method: 'post',
+				dataType: 'JSON',
+				data: {
+					'api_key': 'fHzfUBECTP',
+					'student_id': id
+				},
+				success: function (response){
+					console.log("success deleted student from server");
+					console.log(response);
+				},
+				error: function (response) {
+					console.log("retrieveStudentDataFromServer failed");
+				}
+			});
 
 		}
-		return false;
+
+		// for(var key in this.data){
+
+		// 	if(this.data[key].data.id === id){
+		// 	 delete this.data[key];
+		// 	 return true;
+		// 	}
+
+		// }
+		// return false;
 
 	}
 
