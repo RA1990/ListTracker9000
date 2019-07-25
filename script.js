@@ -13,8 +13,8 @@ function startApp(){
 	startTests will test your code.  Once it works,
 	delete startTests and uncomment the code below to run YOUR code and test it
 	*/
-	intiateTestDisplay();
-	startTests();
+	// intiateTestDisplay();
+	// startTests();
 
 	SGT = new SGT_template({
 		addButton: $("#addButton"),

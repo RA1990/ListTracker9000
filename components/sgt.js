@@ -9,7 +9,7 @@ class SGT_template {
 	return: undefined
 	*/
 	constructor(elementConfig) {
-		
+
 		this.elementConfig = elementConfig; /* console.log elementConfig to note what data you have access to */
 		this.data = {};
 		this.addEventHandlers = this.addEventHandlers.bind(this);
@@ -18,7 +18,38 @@ class SGT_template {
 		this.displayAllStudents = this.displayAllStudents.bind(this);
 		this.doesStudentExist = this.doesStudentExist.bind(this);
 		this.deleteStudent = this.deleteStudent.bind(this);
+		this.retrieveStudentDataFromServer = this.retrieveStudentDataFromServer.bind(this);
 
+	}
+	retrieveStudentDataFromServer(){
+$.ajax({
+			url: 'http://s-apis.learningfuze.com/sgt/get',
+			method: 'post',
+			dataType:'JSON',
+	data:{
+		'api_key':'fHzfUBECTP'
+	},
+	success: function(response){
+		debugger;
+		console.log(response);
+		console.log(response.data);
+		console.log(response.data.length)
+		var responseLength= response.data.length
+		console.log("retrieveStudentDataFromServer is working");
+		for(var responseDataIndex=0;responseDataIndex<responseLength;responseDataIndex++){
+			var newId = response.data[responseDataIndex].id;
+			var newName = response.data[responseDataIndex].name;
+			var newCourse = response.data[responseDataIndex].course;
+			var newGrade = response.data[responseDataIndex].grade;
+			this.createStudent(newId,newName,newCourse,newGrade);
+		}
+		this.displayAllStudents();
+	}.bind(this),
+	error: function(response){
+		console.log("retrieveStudentDataFromServer failed");
+	}
+
+		});
 	}
 
 	/* addEventHandlers - add event handlers to pre-made dom elements
@@ -32,6 +63,7 @@ class SGT_template {
 	addEventHandlers() {
 		$("#addButton").on("click",this.handleAdd);
 		$("#cancelButton").on("click",this.handleCancel);
+		$("#retrieveData").on("click",this.retrieveStudentDataFromServer);
 	}
 
 	/* clearInputs - Clear the values in the three form inputs
@@ -78,7 +110,17 @@ class SGT_template {
 	return: false if unsuccessful in adding student, true if successful
 	ESTIMATED TIME: 1.5 hours
 	*/
-	createStudent(name,course,grade,id) {
+	createStudent(id,name,course,grade) {
+		// $.ajax({
+		// 	url: 'http://s-apis.learningfuze.com/sgt/create',
+		// 	method: 'post',
+		// 	input:
+
+
+		// })
+
+
+		debugger;
 		if (this.doesStudentExist(id)) {
 			return false;
 		};
