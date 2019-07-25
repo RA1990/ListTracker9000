@@ -139,7 +139,6 @@ $.ajax({
 	ESTIMATED TIME: 1.5 hours
 	*/
 	createStudent(id,name,course,grade) {
-		debugger;
 		if (this.doesStudentExist(id)) {
 			return false;
 		} else {
