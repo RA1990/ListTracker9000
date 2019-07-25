@@ -48,7 +48,6 @@ $.ajax({
 	error: function(response){
 		console.log("retrieveStudentDataFromServer failed");
 	}
-
 		});
 	}
 
