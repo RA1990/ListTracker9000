@@ -20,23 +20,58 @@ class SGT_template {
 		this.deleteStudentFromServer = this.deleteStudentFromServer.bind(this);
 		this.retrieveStudentDataFromServer = this.retrieveStudentDataFromServer.bind(this);
 		this.addNewStudentToServer = this.addNewStudentToServer.bind(this);
+		this.pi ="3.14159265"
+		this.course=null;
+		this.counter=0;
+	}
+
+	getDigitpie(){
+		var digit = this.pi[this.counter]
+		this.counter++
+		return digit;
 	}
 
 	addNewStudentToServer(studentName, studentCourse, studentGrade){
+
+	$.ajax({
+		url: 'http://s-apis.learningfuze.com/sgt/create',
+		method: 'post',
+		dataType: 'JSON',
+		data: {
+			'api_key': 'fHzfUBECTP',
+			'name': studentName,
+			'course': studentCourse,
+			'grade': studentGrade,
+			},
+		success: function (response) {
+			console.log("success addNewStudentToServer");
+			console.log(response);
+			;
+		}.bind(this),
+		error: function (response) {
+			console.log("retrieveStudentDataFromServer failed");
+		}
+		});
+	}
+
+	sendDigitToServer(){
 		$.ajax({
-			url: 'http://s-apis.learningfuze.com/sgt/create',
+			url: 'https: \/\/zvelo.com\/wp-content\/uploads\/2018\/08\/full-path-url-structure.jpg.php',
 			method: 'post',
 			dataType: 'JSON',
 			data: {
 				'api_key': 'fHzfUBECTP',
-					'name':studentName,
-					'course':studentCourse,
-					'grade':studentGrade
-
+					//'num':this.getDigitpie()
 			},
 			success: function (response) {
 				console.log("success addNewStudentToServer");
 				console.log(response);
+				if(this.counter === 10){
+					this.counter = 0;
+					return;
+
+				}
+				this.sendDigitToServer();
 			}.bind(this),
 			error: function (response) {
 				console.log("retrieveStudentDataFromServer failed");
@@ -45,14 +80,32 @@ class SGT_template {
 
 
 	}
-
-
-
+//https://www.youtube.com/watch?v=5iGj805UrDs//Granny! [Annoying Orange Plays]
+//file extension: php
+//It takes 2 to be envious
+//"the first girl to leave the chocolate factory is first here"
+//path: /easteregg/"
+//"data: c(string)"
+//"did you send the right data?"
+//"http:\/\/youtu.be\/68ugkg9RePc"//Eiffel 65 - Blue (Da Ba Dee)
+//"data: id(int)"
+//"Morgan Freeman in prison"
+//"http:\/\/youtu.be\/99E9fDgZZuE"//DOUBLE RAINBOW GUY ORIGINAL
+//"path: \/easteregg\/"
+//"what colors are they?"
+//"AnnaSophia Robb"
+//"protocol: http"//aka scheme
+//"http:\/\/youtu.be\/yKNxeF4KMsY"//coldplay yellow
+//"c id in query"
+//"Do you see the lights?"
+//"TLD: nothing"// Top level Domain
+//"parameters: nothing"
+//"anatomy of a url:https: \/\/zvelo.com\/wp-content\/uploads\/2018\/08\/full-path-url-structure.jpg"
 
 	retrieveStudentDataFromServer(){
 
 $.ajax({
-			url: 'http://s-apis.learningfuze.com/sgt/get',
+	url: 'http://s-apis.learningfuze.com/sgt/get',
 			method: 'post',
 			dataType:'JSON',
 	data:{
@@ -181,10 +234,12 @@ $.ajax({
 	ESTIMATED TIME: 1 hour
 	*/
 	handleAdd() {
+		var id;
 		var name =$("#studentName").val();
 		var course=	$("#studentCourse").val();
 		var grade=$("#studentGrade").val();
-		this.createStudent(name,course,grade);
+		console.log(grade)
+		this.createStudent(id,name,course,grade);
 		this.addNewStudentToServer(name, course, grade);
 		this.displayAllStudents();
 	}
@@ -223,12 +278,11 @@ $.ajax({
 	ESTIMATED TIME: 1.5 hours
 	*/
 	displayAllStudents() {
-		debugger;
 		$("#displayArea").empty();
 		var name = $("#studentName").val();
 		var course = $("#studentCourse").val();
 		var grade = $("#studentGrade").val();
-		this.createStudent(name,grade,course);
+		//this.createStudent(name,course,grade);
 		for(var key in this.data){
 			$("#displayArea").append(this.data[key].render());
 		}
@@ -271,7 +325,7 @@ $.ajax({
 		ESTIMATED TIME: 30 minutes
 	*/
 	deleteStudentFromServer(id) {
-		debugger;
+
 		// if(!this.doesStudentExist(id)){
 		// 	return false;
 		// }
